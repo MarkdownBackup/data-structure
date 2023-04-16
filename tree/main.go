@@ -21,6 +21,6 @@ func main() {
 		},
 	}
 
-	i := order.PreorderTraversal(root)
+	i := order.LevelOrder(root)
 	fmt.Printf("i: %v\n", i)
 }
