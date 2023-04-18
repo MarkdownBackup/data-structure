@@ -1,7 +1,7 @@
 package order
 
 // 前序遍历
-func PreorderTraversal(root *TreeNode) (res []int) {
+func PreOrderTraversal(root *TreeNode) (res []int) {
 	if root == nil {
 		return
 	}
