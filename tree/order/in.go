@@ -1,6 +1,6 @@
 package order
 
-func inorderTraversal(root *TreeNode) (res []int) {
+func InOrderTraversal(root *TreeNode) (res []int) {
 	stack := make([]*TreeNode, 0)
 
 	for len(stack) > 0 || root != nil {
