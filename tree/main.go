@@ -2,15 +2,8 @@ package main
 
 import (
 	"fmt"
-	"my/tree/order"
-	"my/tree/tree/bst"
+	"my/tree/tree/avl"
 )
-
-type TreeNode = order.TreeNode
-
-type test struct {
-	data int
-}
 
 func main() {
 
@@ -29,7 +22,7 @@ func main() {
 	// i := order.LevelOrder(root)
 	// fmt.Printf("i: %v\n", i)
 
-	// 二叉排序树
+	/* // 二叉排序树
 	tree := bst.NewBinarySearchTree(nil)
 
 	// 插入
@@ -61,5 +54,30 @@ func main() {
 	}
 	tree.PrintTree()
 
-	fmt.Printf("tree.LevelOrder(): %v\n", tree.LevelOrder())
+	fmt.Printf("tree.LevelOrder(): %v\n", tree.LevelOrder()) */
+
+	// 平衡二叉树
+	tree := avl.NewAVLTree(nil)
+
+	// {3,2,1,4,5,6,7,10,9,8}
+	tree.Insert(3)
+	tree.Insert(2)
+	tree.Insert(1)
+	tree.Insert(4)
+	tree.Insert(5)
+	tree.Insert(6)
+	tree.Insert(7)
+	tree.Insert(10)
+	tree.Insert(9)
+	tree.Insert(8)
+
+	tree.PrintTree()
+	fmt.Printf("Order: %v\n", tree.LevelOrder())
+
+	// a, err := tree.Find(10)
+	// if err != nil {
+	// 	fmt.Printf("err: %v\n", err)
+	// } else {
+	// 	fmt.Printf("a: %v\n", a)
+	// }
 }
