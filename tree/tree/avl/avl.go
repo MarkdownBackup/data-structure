@@ -32,6 +32,15 @@ func (tree *AVLTree) Insert(data DataType) error {
 	return err
 }
 
+// 删除
+func (tree *AVLTree) Delete(data DataType) error {
+	node, err := tree.root.Delete(data)
+
+	tree.root = node
+
+	return err
+}
+
 // 中序遍历 打印整个数组
 func (tree *AVLTree) PrintTree() {
 	res := tree.InOrder()
