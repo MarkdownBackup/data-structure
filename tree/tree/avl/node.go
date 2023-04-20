@@ -1,6 +1,8 @@
 package avl
 
-import "errors"
+import (
+	"errors"
+)
 
 // 节点存储的数据类型
 type DataType = int
@@ -89,7 +91,7 @@ func (node *AVLNode) Insert(data DataType) (*AVLNode, error) {
 		// 平衡二叉树特性:平衡因子不能大于1
 		bf := node.getBalanceFactor()
 		if bf == -2 {
-			// 插入到了node右子树的左孩子
+			// 插入到了node右子树的右孩子
 			if data > node.Right.Data {
 				// 直接左旋
 				newNodeTree = LeftRotate(node)
@@ -211,4 +213,116 @@ func LeftRightRotation(node *AVLNode) *AVLNode {
 func RightLeftRotation(node *AVLNode) *AVLNode {
 	node.Right = RightRotate(node.Right)
 	return LeftRotate(node)
+}
+
+// 删除数据
+func (node *AVLNode) Delete(data DataType) (*AVLNode, error) {
+	if node == nil {
+		return nil, errors.New("节点不存在,无法删除")
+	}
+
+	var err error
+
+	if data < node.Data {
+		// 在左边
+		node.Left, err = node.Left.Delete(data)
+
+		// 删除后更新高度
+		node.Left.UpdataHeight()
+	} else if data > node.Data {
+		// 在右边
+		node.Right, err = node.Right.Delete(data)
+
+		// 删除后更新高度
+		node.Right.UpdataHeight()
+	} else {
+		// 删除
+
+		// 要删除的节点有两个孩子
+		// 如果左子树更高，选择左子树中值最大的节点，也就是左子树最右边的叶子节点
+		// 如果右子树更高，选择右子树中值最小的节点，也就是右子树最左边的叶子节点
+		// 最后，删除这个叶子节点即可
+		if node.Left != nil && node.Right != nil {
+			// 左子树更高
+			if node.Left.Height > node.Right.Height {
+				maxNode := node.Left
+				for maxNode.Right != nil {
+					maxNode = maxNode.Right
+				}
+
+				node.Data = maxNode.Data
+
+				// 删除最大节点
+				node.Left, err = node.Left.Delete(maxNode.Data)
+				// 删除后更新高度
+				node.Left.UpdataHeight()
+			} else {
+				// 右子树更高
+				minNode := node.Right
+				for minNode.Left != nil {
+					minNode = minNode.Left
+				}
+
+				node.Data = minNode.Data
+
+				node.Right, err = node.Right.Delete(minNode.Data)
+			}
+
+			return node, err
+		}
+
+		// 要删除的为叶子节点
+		if node.Left == nil && node.Right == nil {
+			// 直接删除
+			return nil, err
+		}
+
+		// 此时只有一个节点
+		if node.Left != nil {
+			// 只有左节点
+			return node.Left, err
+		}
+
+		if node.Right != nil {
+			// 只有右节点
+			return node.Right, err
+		}
+
+	}
+
+	// 重新调整为平衡二叉树
+	// 调整后的新根节点
+	var newRoot *AVLNode
+
+	switch node.getBalanceFactor() {
+	case 2:
+		// 左节点高
+		if node.Left.getBalanceFactor() > 0 {
+			// 直接右旋
+			newRoot = RightRotate(node)
+		} else {
+			newRoot = LeftRightRotation(node)
+		}
+	case -2:
+		// 右节点高
+		if node.Right.getBalanceFactor() < 0 {
+			// 直接左旋
+			newRoot = LeftRotate(node)
+		} else {
+			newRoot = RightLeftRotation(node)
+		}
+
+	}
+
+	// 不需要调整平衡
+	if newRoot == nil {
+		// 更新高度
+		node.UpdataHeight()
+
+		return node, err
+	}
+
+	newRoot.UpdataHeight()
+
+	return newRoot, err
 }
