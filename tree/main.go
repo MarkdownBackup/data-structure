@@ -80,4 +80,13 @@ func main() {
 	// } else {
 	// 	fmt.Printf("a: %v\n", a)
 	// }
+
+	// 删除
+	err := tree.Delete(10)
+	if err != nil {
+		fmt.Printf("err: %v\n", err)
+	}
+
+	tree.PrintTree()
+	fmt.Printf("Order: %v\n", tree.LevelOrder())
 }
