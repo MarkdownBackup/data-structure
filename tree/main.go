@@ -82,7 +82,7 @@ func main() {
 	// }
 
 	// 删除
-	err := tree.Delete(10)
+	err := tree.Delete(3)
 	if err != nil {
 		fmt.Printf("err: %v\n", err)
 	}
