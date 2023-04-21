@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"math"
 )
 
 // 平衡二叉树节点
@@ -349,14 +350,91 @@ func (node *AVLNode) getMaxNode() *AVLNode {
 	return node
 }
 
-// TODO:IsAVLTree 判断是不是平衡二叉树
-func (tree *AVLTree) IsAVLTree() bool {
-	return false
+// IsAVLTree 判断是不是平衡二叉树
+func (tree *AVLTree) IsAVLTree() (bool, error) {
+	if tree == nil || tree.root == nil {
+		return true, nil
+	}
+
+	return tree.root.IsBalanced()
 }
 
-// TODO:IsBalanced 判断节点是否符合平衡二叉树的定义
-func (node *AVLNode) IsBalanced() bool {
-	return false
+// IsBalanced 判断节点是否符合平衡二叉树的定义
+func (node *AVLNode) IsBalanced() (bool, error) {
+	if node == nil {
+		return true, nil
+	}
+
+	// 为叶子节点
+	if node.Left == nil && node.Right == nil {
+		return true, nil
+	}
+
+	// 有两个节点
+	if node.Left != nil && node.Right != nil {
+		// 判断是否满足二叉排序树定义(node.Left.Data < node.Data && node.Data < node.Right.Data)
+		if node.Left.Data > node.Data || node.Data > node.Right.Data {
+			return false, fmt.Errorf("当前节点:%v, 当前节点的值:%v, 左子树数据:%v, 右子树数据:%v, 不满足二叉排序树定义", node, node.Data, node.Left.Data, node.Right.Data)
+		}
+
+		// 获取平衡因子
+		bf := node.getBalanceFactor()
+		if math.Abs(float64(bf)) > 1 {
+			return false, fmt.Errorf("当前节点:%v, 平衡因子bf = %d", node, bf)
+		}
+
+		// 递归判断左子树和右子树
+		if ok, err := node.Left.IsBalanced(); !ok {
+			return ok, err
+		}
+
+		if ok, err := node.Right.IsBalanced(); !ok {
+			return ok, err
+		}
+
+		return true, nil
+	}
+
+	// 此时一定只有一个节点
+	if node.Left != nil {
+		// 子节点必须为叶子节点
+		if node.Left.Left != nil || node.Left.Right != nil {
+			return false, fmt.Errorf("当前节点:%v, 非叶子节点", node)
+		}
+
+		// 子节点高度只能为1
+		if node.Left.Height != 1 {
+			return false, fmt.Errorf("当前节点:%v, 只有左节点, 且高度为:%d > 1 不满足", node, node.Left.Height)
+		}
+
+		// 是否满足二叉排序树
+		if node.Left.Data > node.Data {
+			return false, fmt.Errorf("当前节点:%v, 当前节点的值:%v, 左子树数据:%v, 不满足二叉排序树定义", node, node.Data, node.Left.Data)
+		}
+
+		return true, nil
+	}
+
+	if node.Right != nil {
+		// 子节点高度只能为1
+		if node.Right.Height != 1 {
+			return false, fmt.Errorf("当前节点:%v, 只有左节点, 且高度为:%d > 1 不满足", node, node.Left.Height)
+		}
+
+		// 子节点必须为叶子节点
+		if node.Right.Left != nil || node.Right.Right != nil {
+			return false, fmt.Errorf("当前节点:%v, 非叶子节点", node)
+		}
+
+		// 是否满足二叉排序树
+		if node.Right.Data < node.Data {
+			return false, fmt.Errorf("当前节点:%v, 当前节点的值:%v, 左子树数据:%v, 不满足二叉排序树定义", node, node.Data, node.Left.Data)
+		}
+
+		return true, nil
+	}
+
+	return true, nil
 }
 
 func main() {
@@ -379,11 +457,15 @@ func main() {
 	fmt.Printf("Order: %v\n", tree.LevelOrder())
 
 	// 判断是否是平衡二叉树
-	fmt.Printf("是否是平衡二叉树: %v\n", tree.IsAVLTree())
+	b, err := tree.IsAVLTree()
+	fmt.Printf("是否是平衡二叉树: %v\n", b)
+	if err != nil {
+		fmt.Printf("err: %v\n", err)
+	}
 
 	fmt.Println("--------")
 
-	err := tree.Delete(7)
+	err = tree.Delete(7)
 	if err != nil {
 		fmt.Printf("err: %v\n", err)
 	}
@@ -392,7 +474,11 @@ func main() {
 	fmt.Printf("Order: %v\n", tree.LevelOrder())
 
 	// 判断是否是平衡二叉树
-	fmt.Printf("是否是平衡二叉树: %v\n", tree.IsAVLTree())
+	b, err = tree.IsAVLTree()
+	fmt.Printf("是否是平衡二叉树: %v\n", b)
+	if err != nil {
+		fmt.Printf("err: %v\n", err)
+	}
 
 	fmt.Println("--------")
 
@@ -405,7 +491,11 @@ func main() {
 	fmt.Printf("Order: %v\n", tree.LevelOrder())
 
 	// 判断是否是平衡二叉树
-	fmt.Printf("是否是平衡二叉树: %v\n", tree.IsAVLTree())
+	b, err = tree.IsAVLTree()
+	fmt.Printf("是否是平衡二叉树: %v\n", b)
+	if err != nil {
+		fmt.Printf("err: %v\n", err)
+	}
 
 	fmt.Println("--------")
 
@@ -418,7 +508,11 @@ func main() {
 	fmt.Printf("Order: %v\n", tree.LevelOrder())
 
 	// 判断是否是平衡二叉树
-	fmt.Printf("是否是平衡二叉树: %v\n", tree.IsAVLTree())
+	b, err = tree.IsAVLTree()
+	fmt.Printf("是否是平衡二叉树: %v\n", b)
+	if err != nil {
+		fmt.Printf("err: %v\n", err)
+	}
 
 	fmt.Println("--------")
 
@@ -431,5 +525,9 @@ func main() {
 	fmt.Printf("Order: %v\n", tree.LevelOrder())
 
 	// 判断是否是平衡二叉树
-	fmt.Printf("是否是平衡二叉树: %v\n", tree.IsAVLTree())
+	b, err = tree.IsAVLTree()
+	fmt.Printf("是否是平衡二叉树: %v\n", b)
+	if err != nil {
+		fmt.Printf("err: %v\n", err)
+	}
 }
