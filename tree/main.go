@@ -1,10 +1,5 @@
 package main
 
-import (
-	"fmt"
-	"my/tree/tree/avl"
-)
-
 func main() {
 
 	// 前序遍历
@@ -56,7 +51,7 @@ func main() {
 
 	fmt.Printf("tree.LevelOrder(): %v\n", tree.LevelOrder()) */
 
-	// 平衡二叉树
+	/* // 平衡二叉树
 	tree := avl.NewAVLTree(nil)
 
 	// {3,2,1,4,5,6,7,10,9,8}
@@ -88,5 +83,5 @@ func main() {
 	}
 
 	tree.PrintTree()
-	fmt.Printf("Order: %v\n", tree.LevelOrder())
+	fmt.Printf("Order: %v\n", tree.LevelOrder()) */
 }
